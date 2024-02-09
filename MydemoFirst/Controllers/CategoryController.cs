@@ -100,7 +100,7 @@ namespace MydemoFirst.Controllers
             var result = new GenericResponse<CategoryResponse>
             {
 
-                Msg = "update thanh congggggg1232132131233124",
+                Msg = "update thanh congggggg1232132131233124asdsadsadasdasdaasda",
 
                 Values = newCategory
 

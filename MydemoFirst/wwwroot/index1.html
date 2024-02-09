@@ -1,0 +1,751 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+    <!-- Thêm vào phần head của HTML -->
+</head>
+
+<style>
+    @import url('https://fonts.googleapis.com/css?family=Lato');
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        background: url('https://cdn.pixabay.com/photo/2018/01/14/23/12/nature-3082832_1280.jpg');
+        background-size: cover;
+        background-position: center center;
+        /* max-height: 100vh;
+        min-height: 100vh; */
+        font-family: 'Lato', sans-serif;
+    }
+
+    .welcome-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: red;
+        color: antiquewhite;
+        z-index: 899;
+    }
+
+    .wrapper {
+        display: flex !important;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .list-group-container {
+        width: 38%;
+    }
+
+    .chat-container {
+        background-color: rgba(0, 0, 0, 0.4);
+        box-shadow: 0px 0px 10px 5px rgba(0, 0, 0, 0.7);
+        /*        overflow-y: hidden;*/
+        min-height: 100vh;
+        /* max-height: 100vh;
+        min-height: 100vh; */
+
+        width: 62%;
+    }
+
+    .chat-box {
+        padding: 30px 20px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+        justify-content: flex-end;
+        cursor: pointer;
+    }
+
+    /* .chat {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        list-style-type: none;
+
+    } */
+
+    .message-wrapper {
+        padding: 5px;
+        display: flex;
+        margin: 20px 0px;
+        ;
+    }
+
+        .message-wrapper.right {
+            padding: 5px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+    .message {
+        display: flex;
+        align-items: center;
+        position: relative;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 50px;
+        box-shadow: 0px 15px 5px 0px rgba(0, 0, 0, 0.5);
+        max-width: 50%;
+    }
+
+        .message.right {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 50px;
+            box-shadow: 0px 15px 5px 0px rgba(0, 0, 0, 0.5);
+            position: relative;
+            margin-bottom: 30px;
+            align-self: flex-end;
+            padding: 15px 70px 15px 20px;
+            align-self: flex-end;
+        }
+
+    .logo {
+        border-radius: 50%;
+        box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.7);
+        object-fit: cover;
+        position: absolute;
+        left: 0px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+    }
+
+    .message.right .logo {
+        left: auto;
+        right: 10px;
+    }
+
+    .message p {
+        margin: 10px 40px;
+    }
+
+    /* .text_input {
+        font-size: 16px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 10px 15px;
+        width: 100%;
+    } */
+
+    .btn-send {
+        position: absolute;
+        z-index: 999;
+        bottom: 0% !important;
+        right: 0 !important;
+        width: 50px;
+        height: 50px !important;
+        border-radius: 10px;
+        background-color: black;
+        color: wheat !important;
+    }
+
+    .btn-join {
+        position: absolute;
+        z-index: 999;
+        bottom: 0% !important;
+        right: 5% !important;
+        width: 50px;
+        height: 50px !important;
+        border-radius: 10px;
+        background-color: blue;
+        color: red !important;
+    }
+
+    .btn-out {
+        position: absolute;
+        z-index: 999;
+        bottom: 0% !important;
+        right: 10% !important;
+        width: 50px;
+        height: 50px !important;
+        border-radius: 10px;
+        background-color: forestgreen;
+        color: red !important;
+    }
+
+    .list-group {
+        max-height: 95vh;
+        overflow-y: scroll !important;
+    }
+</style>
+
+<body id="body">
+
+    <div class="wrapper">
+
+        <!--<div class="alert alert-warning alert-dismissible fade show position-fixed end-0" role="alert"
+             style="z-index: 6;">
+            <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>-->
+        <div id="alert-box">
+        </div>
+        <div class="list-group-container">
+            <div class="group-header text-center bg-info text-bg-danger
+
+            " style="height: 5vh;">
+
+                <div class="header w-100 h-100 d-flex justify-content-between align-content-center align-items-center px-3">
+
+                    <span id="welcome"> Ly the vinh</span>
+
+                    <span style="cursor: pointer;" class="btn-register" data-bs-toggle="modal"
+                          data-bs-target="#ModalCreate">
+                        Tạo
+                        Nhóm
+                    </span>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="ModalCreate" tabindex="-1" aria-labelledby="ModalCreateLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="ModalCreateLabel">Modal title</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Tên Nhóm Cần Tạo</span>
+                                        <input type="text" id="input-create-group" aria-label="First name"
+                                               class="form-control">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button type="button" class="btn btn-primary " id="btn-create-group">
+                                        Save
+                                        changes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <span style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#JoineModal">
+                        Vào
+                        Nhóm
+                    </span>
+
+                    <div class="modal fade" id="JoineModal" tabindex="-1" aria-labelledby="JoineModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="JoineModalLabel">Modal title</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Tên Nhóm Cần Vào</span>
+                                        <input type="text" id="join-input" aria-label="First name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button type="button" id="join-btn" class="btn btn-primary">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <span style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#LoginModal"> Connect</span>
+
+                    <div class="modal fade" id="LoginModal" tabindex="-1" aria-labelledby="LoginModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="JoineModalLabel">Modal title</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Nhập Token</span>
+                                        <input type="text" aria-label="First name" class="form-control "
+                                               id="login-input">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button " class="btn btn-secondary" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                    <button type="button" id="btn-login-input" class="btn btn-primary">
+                                        Save
+                                        changes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <ol class="list-group list-group-numbered overflow-y-scroll " id="list-group">
+                <!--<li class="list-group-item d-flex justify-content-between align-items-center ">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold ">Tên Phòng</div>
+                        <span class="name-room"> Phòng chat 1</span>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <span class="text-body-secondary fw-bold">Số members</span>
+                        <span class="badge bg-primary rounded-pill number-member">14</span>
+                    </div>
+                    <div class="leave_room  h-100 d-flex ms-4 text-bg-danger px-2 rounded-2 " style="cursor: pointer;">
+                        rời nhóm
+                    </div>
+                </li>-->
+            </ol>
+        </div>
+
+        <div class="chat-container position-relative  overflow-y-scroll" style="height: 100vh;">
+
+            <!-- <div class="chat-box">
+
+
+                <div class="message-wrapper right">
+                    <li class="message">
+                        <img class="logo" src="https://randomuser.me/api/portraits/men/67.jpg" alt="">
+                        <p>I'm hungry I'm hungry! I'm hungry! I'm hungry! I'm hungry! I'm hungry!!</p>
+                    </li>
+                </div>
+
+                <div class="message-wrapper">
+                    <li class="message">
+                        <img class="logo" src="https://randomuser.me/api/portraits/women/17.jpg" alt="">
+                        <p>I'm hungry!</p>
+                    </li>
+                </div>
+
+
+                <div class="d-block w-100 position-fixed bottom-0  end-0  rounded-1 "
+                    style=" width: 70% !important;height: 40px;">
+
+                    <input id="messageInputRoom1" type="text" class="position-absolute  text_input w-100 h-100"
+                        placeholder="Message..." />
+                    <button onclick="sendMessage('room2')" class="btn-send">gửi</button>
+                </div>
+
+
+
+            </div> -->
+
+
+        </div>
+    </div>
+</body>
+
+<script>
+
+
+
+
+
+    // let listGroupItem = document.querySelectorAll(".list-group-item");
+
+
+
+
+
+
+
+
+    let loginValue = document.getElementById("login-input");
+
+    let btnLoginInput = document.getElementById("btn-login-input");
+
+    //  console.log(btnLoginInput);
+
+    btnLoginInput.addEventListener("click", () => {
+        let Token = loginValue.value;
+
+        sessionStorage.setItem("tokenJwt", Token);
+        location.reload()
+
+    });
+
+    var connection = new signalR.HubConnectionBuilder().withUrl("/hub/AppChat",
+
+        {
+            accessTokenFactory: () => sessionStorage.getItem("tokenJwt"),
+            /*            serverTimeoutInMilliseconds: 1000 * 60 * 1,*/
+
+        }
+
+    ).build();
+
+    connection.start().then(function () {
+        console.log("ket noi thah cong")
+        /*        console.log(sessionStorage.getItem("tokenJwt"));*/
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+
+    let createValue = document.getElementById("input-create-group");
+
+    let btncreateBtn = document.getElementById("btn-create-group");
+
+    btncreateBtn.addEventListener("click", (events) => {
+
+        let nameGroup = createValue.value;
+
+        connection.invoke("CreateGroup", nameGroup).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        /*        let token = sessionStorage.getItem("tokenJwt");*/
+        /*        var decoded = parseJwt(token);*/
+        //const connectionId = connection.connectionId;
+        //// Gọi controller và truyền ConnectionId
+        //fetch(`https://localhost:7091/api/AppChat?conectionId=${connectionId}&userId=${decoded.userId}`, {
+        //    method: "POST",
+        //    headers: {
+        //        "Content-Type": "application/json",
+        //    },
+        //    body: JSON.stringify({ Name: nameGroup }),
+        //});
+
+    });
+
+    let joinValue = document.getElementById("join-input");
+
+    let btnjoinBtn = document.getElementById("join-btn");
+
+    btnjoinBtn.addEventListener("click", (events) => {
+
+        let nameGroupJoin = joinValue.value;
+
+        connection.invoke("joinGroup", nameGroupJoin).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+    });
+
+    connection.on("getProfileInfo", function (email) {
+        /*        console.log("getProfileInfo")*/
+
+        let welcome = document.getElementById("welcome");
+        welcome.innerText = email;
+    });
+
+    connection.on("onError", function (message) {
+        showMessage(message, "danger");
+    });
+
+    connection.on("newMessage", function (message) {
+        showMessage(message, "info");
+    });
+
+    connection.on("addRoom", function (message) {
+        showMessage(message, "info");
+    });
+
+    connection.on("removeRoom", function (roomName) {
+
+        location.reload();
+
+    });
+    function handleRemoveRoom(roomName) {
+
+        connection.invoke("LeaveGroup", roomName).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        showMessage("da roi nhom thanh cong", "info");
+    }
+
+    connection.on("GetAllRooms", function (object) {
+
+        let box = document.getElementById('list-group');
+        box.innerHTML = ""
+        if (object.length > 0) {
+
+            object.forEach(function (item) {
+
+                /*                console.log(item);*/
+
+                let htmlString = `
+        <li class="list-group-item d-flex justify-content-between align-items-center " id="room-${item.room.name}"
+        onclick="handleGroupItemClick('${item.room.name}',this)" >
+            <div class="ms-2 me-auto">
+                <div class="fw-bold ">Tên Phòng</div>
+                <span class="name-room"> ${item.room.name}</span>
+            </div>
+            <div class="d-flex flex-column">
+                <span class="text-body-secondary fw-bold">Số members</span>
+                <span class="badge bg-primary rounded-pill number-member">${item.countMember}</span>
+            </div>
+            <div class="leave_room  h-100 d-flex ms-4 text-bg-danger px-2 rounded-2 " onclick="handleRemoveRoom('${item.room.name}')" style="cursor: pointer;">
+                rời nhóm
+            </div>
+        </li>
+`;
+
+                if (box) {
+                    box.innerHTML += htmlString;
+                }
+
+                //render box space
+
+                let boxChatContainer = document.getElementsByClassName('chat-container')[0];
+
+                /*                console.log(boxChatContainer);*/
+                let htmlStringBoxSpace =
+
+                    `
+                             <div class="chat-box" id="chat-box-${item.room.name}">
+               <div class="message-wrapper ">
+                   <li class="message">
+                       <img class="logo" src="https://randomuser.me/api/portraits/men/67.jpg" alt="">
+                       <p>I'm hungry I'm hungry! I'm hungry! I'm hungry! I'm hungry! I'm hungry!! ${item.room.name} </p>
+                   </li>
+               </div>
+
+               <div class="message-wrapper">
+                   <li class="message">
+                       <img class="logo" src="https://randomuser.me/api/portraits/women/17.jpg" alt="">
+                       <p>I'm hungry!</p>
+                   </li>
+               </div>
+
+
+               <div class="d-block w-100 position-fixed bottom-0  end-0  rounded-1 "
+                   style=" width: 70% !important;height: 40px;">
+
+                   <input id="messageInputRoom1" type="text" class="position-absolute  text_input w-100 h-100"
+                       placeholder="Message..." />
+                   <button onclick="handleSendMailClick('${item.room.name}',this)" class="btn-send">gửi</button>
+               </div>
+
+
+
+           </div>
+
+
+
+                             `
+
+                if (boxChatContainer) {
+                    boxChatContainer.innerHTML += htmlStringBoxSpace;
+                }
+
+
+            });
+
+
+        }
+
+        let boxChatList = document.querySelectorAll(".chat-box");;
+        /*        console.log(boxChatList);*/
+        if (boxChatList.length > 0) {
+            boxChatList.forEach((boxChat, index) => {
+                if (index != 0)
+                    boxChat.style.display = 'none';
+
+
+            });
+        }
+
+
+
+
+    });
+
+    function handleGroupItemClick(roomName, el) {
+
+        console.log(roomName);
+
+
+
+        listGroupItem = document.querySelectorAll(".list-group-item")
+
+
+        listGroupItem.forEach((item, index) => {
+
+            item.style.backgroundColor = "white";
+
+        });
+        el.style.backgroundColor = "rgba(255, 0, 0, 0.5)";
+
+
+        let boxChatList = document.querySelectorAll(".chat-box");
+        boxChatList.forEach((boxChat, index) => {
+
+
+            boxChat.style.display = 'none';
+
+        });
+
+        let boxChatOfThis = document.getElementById(`chat-box-${roomName}`);
+        boxChatOfThis.style.display = 'flex';
+
+        /*        console.log(boxChatOfThis);*/
+
+
+
+
+
+    }
+
+
+    function handleSendMailClick(roomName, el) {
+
+        let valueMesaage = el.previousElementSibling.value;
+
+        connection.invoke("sendMessageIntoGroup", valueMesaage, roomName).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+
+
+    }
+
+
+
+
+    connection.on("newGroupMessage", function (userName, message, roomName) {
+        let box = document.getElementById('list-group');
+        updateMessageInRoom(userName, message, roomName);
+
+
+    });
+
+
+    function updateMessageInRoom(userName, message, roomName) {
+
+
+
+        let chatBox = document.getElementById(`chat-box-${roomName}`);
+
+
+        let emailFormJwt = getcurrentUserInfo()["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
+
+
+        console.log(emailFormJwt);
+
+        let htmlString = `<div class="message-wrapper my-5  ${emailFormJwt == userName.email ? 'right' : ''}">
+      <li class="message">
+         <img class="logo" src="https://randomuser.me/api/portraits/women/17.jpg" alt="">
+            <p><span class="fw-bold">${userName.userName}</span>  <span class="ms-2">${message} </span></p>
+         </li>
+      </div >`;
+
+
+
+        chatBox.innerHTML += htmlString;
+
+
+    }
+
+
+
+    connection.on("addRoom", function (item) {
+        let box = document.getElementById('list-group');
+        if (item.countMember
+            > 0) {
+
+            let htmlString = `
+        <li class="list-group-item d-flex justify-content-between align-items-center ">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold ">Tên Phòng</div>
+                <span class="name-room"> ${item.room.name}</span>
+            </div>
+            <div class="d-flex flex-column">
+                <span class="text-body-secondary fw-bold">Số members</span>
+                <span class="badge bg-primary rounded-pill number-member">${item.countMember}</span>
+            </div>
+            <div class="leave_room  h-100 d-flex ms-4 text-bg-danger px-2 rounded-2 " onclick="handleRemoveRoom('${item.room.name}')" style="cursor: pointer;">
+    rời nhóm
+</div>
+        </li>
+`;
+
+            if (box) {
+                box.innerHTML += htmlString;
+            }
+
+        }
+
+    });
+
+
+
+
+
+
+
+
+
+
+    function showMessage(message, type = "alert-warning") {
+
+        /*        console.log("dag tao message")*/
+        let box = document.getElementById('alert-box');
+
+        let htmlString = `<div class="alert alert-${type} alert-dismissible fade show position-fixed end-0" role="alert" style="z-index: 6;">
+           <strong>Thông Báo!</strong> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>`;
+
+        if (box) {
+            box.innerHTML += htmlString;
+        }
+
+    }
+
+
+    function getcurrentUserInfo() {
+
+        let token = sessionStorage.getItem("tokenJwt");
+        let decoded = parseJwt(token)
+
+        return decoded
+    }
+
+    function parseJwt(token) {
+        var base64Url = token.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
+        return JSON.parse(jsonPayload);
+    }
+
+    //document.getElementById("sendButton").addEventListener("click", function (event) {
+
+    //    var user = document.getElementById("userInput").value;
+
+    //    var message = document.getElementById("messageInput").value;
+    //    connection.invoke("SendMessage", user, message).catch(function (err) {
+    //        return console.error(err.toString());
+    //    });
+    //    event.preventDefault();
+    //});
+</script>

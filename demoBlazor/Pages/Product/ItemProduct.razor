@@ -1,0 +1,95 @@
+﻿
+@using demoBlazor.Helpers
+@inject JsHelper JsHelper
+
+<h3>ItemProduct</h3>
+
+
+<h4>@Counter</h4>
+
+
+@foreach(string item in Info)
+{
+    <h4>@item</h4>
+
+}
+
+
+@code {
+
+    [Parameter]
+
+    public int Counter {
+        get; set;
+    }
+
+    List<string> Info { get; set; } = new List<string>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        ///doan nay se chay moi khi dc render lai  và ở lần đầu nó chạy sau OnInitializedAsync
+        Info.Add("day la OnParametersSetAsync cua child ");
+
+
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {  ///doan nay se chay lan dau tien và dau tien
+
+        Info.Add("day la OnInitializedAsync cua child ");
+
+
+
+    }
+    // protected override void OnInitialized()
+    // {
+
+    // chan luon component cha
+    //     Thread.Sleep(5000);
+    //     Info.Add("day la OnInitialized cua child ");
+
+
+    // }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        //Khi component được thêm vào DOM lần đầu tiên, phương thức OnAfterRenderAsync sẽ được gọi sau khi quá trình render hoàn tất.
+
+        //     / Sau mỗi lần render lại(re-render):
+
+        // Nếu có bất kỳ sự thay đổi nào trong trạng thái của component hoặc có sự thay đổi trong các tham số của nó,
+        // Blazor sẽ thực hiện quá trình render lại và gọi lại OnAfterRenderAsync sau khi render lại hoàn tất.
+        await base.OnAfterRenderAsync(firstRender);
+     
+        if (firstRender)
+        {
+            await JsHelper.Log(" day la  OnAfterRenderAsync cua child first");
+             Info.Add("day la OnAfterRenderAsync first cua child ");
+
+        }
+        else
+        {
+            await JsHelper.Log(" day la  OnAfterRenderAsync cua child N");
+            Info.Add("day la OnAfterRenderAsync NN cua child ");
+
+        }
+       
+
+    }
+
+    protected override bool ShouldRender()
+    {
+
+        JsHelper.Log(" day la  ShouldRender cua child");
+        Info.Add("day la   ShouldRender cua child  ");
+
+
+        //should reder chỉ chạy khi component dc render lại
+        return true;//// Trả về true nếu muốn component được render lại, ngược lại trả về false.
+    }
+
+
+
+}

@@ -1,0 +1,55 @@
+﻿@page "/counter"
+
+@using Fluxor.Blazor.Web.Components
+@using demoBlazor.FluxorServices.Counter
+@inject IState<CounterState> counterState
+@inject IDispatcher dispatcher
+@inherits FluxorComponent
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<CounterChild countChild="@counterState.Value.ClickCount" resetCount="resetCount"></CounterChild>
+
+CounterChild
+
+<p role="status">Current count: @counterState.Value.ClickCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+    private void IncrementCount()
+    {
+        dispatcher.Dispatch(new IncrementCounterAction(2));
+    }
+
+    private void resetCount()
+    {
+        dispatcher.Dispatch(new ResetCounterAction());
+    }
+}
+<Button Color="ButtonColor.Primary" @onclick="ShowLoadingDataAsync">Show Loading data...</Button>
+<Button Color="ButtonColor.Dark" @onclick="ShowSavingDataAsync">Show Saving data...</Button>
+
+@code {
+    [Inject] protected PreloadService PreloadService { get; set; }
+   
+
+    private async Task ShowLoadingDataAsync()
+    {
+        PreloadService.Show(SpinnerColor.Light, "Loading data...");
+        await Task.Delay(3000); // call the service/api
+        PreloadService.Hide();
+
+
+
+    }
+
+    private async Task ShowSavingDataAsync()
+    {
+        PreloadService.Show(SpinnerColor.Light, "Saving data...");
+        await Task.Delay(3000); // call the service/api
+        PreloadService.Hide();
+    }
+}

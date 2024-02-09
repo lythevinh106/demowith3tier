@@ -1,0 +1,271 @@
+﻿@page "/product"
+
+@using demoBlazor.FluxorServices.Other
+@inject IState<OtherState> otherState
+@inject IDispatcher dispatcher
+@using demoBlazor.Helpers
+
+@using DTOShared.Modules.Products
+
+@if (allProduct == null)
+{
+    <div>Product</div>
+}
+else
+{
+
+    <div class="d-flex justify-content-center">
+
+        <Pagination ActivePageNumber="@allProduct.CurrentPage"
+                    TotalPages="@allProduct.TotalPage"
+                    DisplayPages=8
+                    FirstLinkIcon="IconName.ChevronDoubleLeft"
+                    PreviousLinkIcon="IconName.ChevronLeft"
+                    NextLinkIcon="IconName.ChevronRight"
+                    LastLinkIcon="IconName.ChevronDoubleRight"
+                    PageChanged="OnPageChangedAsync" />
+    </div>
+
+    //////filter
+
+    <div class="d-flex justify-content-between">
+
+        <div class="col">
+            <label>Search</label>
+            <input class="form-control" @bind="@search" @oninput="OnSearchInput"></input>
+        </div>
+        <div class="col">
+
+            <select class="form-select" aria-label="Default select example" @onchange="OnChangeSort">
+
+                <option value="@DTOShared.Enums.SortProductOption.PriceAscending" selected>Moi toi cu</option>
+                <option value="@DTOShared.Enums.SortProductOption.PriceDescending">cu tới mới</option>
+            </select>
+        </div>
+        <div class="col"></div>
+
+        <div class="col">
+
+            @*<div class="col">
+                    <label>Priority</label>
+                    <InputSelect class="form-control" @bind-Value="TaskListSearch.Priority">
+                        <option>--Select--</option>
+                        @foreach (string item in Enum.GetNames(typeof(Priority)))
+                        {
+                            <option value="@item">@item</option>
+                        }
+                    </InputSelect>
+                </div>*@
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Sửa</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < allProduct.Data.Count; i++)
+            {
+
+                var Product = allProduct.Data[i];
+
+                <tr>
+                    <td>@Product.Id</td>
+                    <td>@Product.Name</td>
+
+                    <td>
+                        <ButtonComponent OnButtonClick="() => HandleShowCanvas(Product.Id)">
+                            <Icon Name="IconName.BrushFill"></Icon>
+                        </ButtonComponent>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <OffCanvasComponent @ref="OffcanvasEl">
+
+        <FormComponent @ref="@formEl"
+                       model=@ProductUpdateRequest
+                       OnSubmitForm="@HandleOnSubmitForm">
+            <DataAnnotationsValidator />
+
+            @if (ProductUpdateRequest != null && allCategory != null)
+            {
+
+                <InputWrapperComponent labelTitle="Name">
+
+                    <InputText class="form-control"
+                               @bind-Value="@ProductUpdateRequest.Name"></InputText>
+
+                    <div class="text-danger fs-6 fw-bolder" style="min-height:24px">
+
+                        <ValidationMessage For="()=>ProductUpdateRequest.Name">
+                        </ValidationMessage>
+                    </div>
+                </InputWrapperComponent>
+
+                <InputWrapperComponent labelTitle="Price">
+
+                    <InputNumber class="form-control"
+                                 @bind-Value="@ProductUpdateRequest.Price"></InputNumber>
+
+                    <div class="text-danger fs-6 fw-bolder" style="min-height:24px">
+
+                        <ValidationMessage For="()=>ProductUpdateRequest.Price">
+                        </ValidationMessage>
+                    </div>
+                </InputWrapperComponent>
+
+                <InputWrapperComponent labelTitle="CategoryId">
+
+                    <InputSelect class="form-control" @bind-Value="ProductUpdateRequest.CategoryId">
+                        <option>Select a priority</option>
+                        @foreach (var item in allCategory)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    </InputSelect>
+                </InputWrapperComponent>
+            }
+
+            <ButtonComponent type=ButtonType.Submit> Submit</ButtonComponent>
+        </FormComponent>
+    </OffCanvasComponent>
+
+}
+
+@code{
+
+    public OffCanvasComponent OffcanvasEl = default!;
+
+    public FormComponent formEl = default!;
+
+    public DTOShared.FetchData.FetchDataProductRequest request = new DTOShared.FetchData.FetchDataProductRequest();
+
+    public int pageNumber = 0;
+    public string search = "";
+
+    public DTOShared.Enums.SortProductOption sort;
+
+
+
+    public InputWrapperComponent? nameInput;
+
+    [Inject] private JsHelper JsHelper { get; set; }
+
+    [Inject] private demoBlazor.Services.Product.IProductClient productClient { get; set; }
+    public DTOShared.Modules.Products.Response.ProductResponse? ProductUpdateResponse { get; set; } = new DTOShared.Modules.Products.Response.ProductResponse();
+    public DTOShared.Modules.Products.Request.ProductRequest? ProductUpdateRequest { get; set; } = new DTOShared.Modules.Products.Request.ProductRequest();
+
+    public DTOShared.Pagging.PaggingResponse<DTOShared.Modules.Products.Response.ProductResponse> allProduct;
+    [Inject] protected ToastService ToastService { get; set; } = default!;
+
+    [Inject] private demoBlazor.Services.Cateogory.ICateogryClient categoryClient { get; set; }
+
+    public List<DTOShared.Modules.Category.Response.CategoryResponse> allCategory = new List<DTOShared.Modules.Category.Response.CategoryResponse>();
+
+    protected async override Task OnInitializedAsync()
+    {
+        //Product = await ProductClient.GetProductByID(10);
+        //JsHelper.LogObject(Catetory);
+
+        await callData();
+
+    }
+    protected async Task callData()
+    {
+        request = new DTOShared.FetchData.FetchDataProductRequest
+        {
+
+            PageNumber = pageNumber != 0 ? pageNumber : 1,
+            // Sort = DTOShared.Enums.SortIdEnum.IdDescending,
+            PageSize = 2,
+            Search = search,
+            Sort = sort
+
+        };
+
+        allProduct = await productClient.FetchProduct(request);
+
+        JsHelper.LogObject(allProduct);
+
+        await InvokeAsync(StateHasChanged);
+
+    }
+
+    protected async Task HandleShowCanvas(int categoryId)
+    {
+
+        OffcanvasEl.offcanvas.ShowAsync();
+
+        ProductUpdateResponse = await productClient.GetProductByID(categoryId);
+
+        ProductUpdateRequest = new DTOShared.Modules.Products.Request.ProductRequest()
+        {
+            Name = ProductUpdateResponse.Name,
+            Price = ProductUpdateResponse.Price,
+            CategoryId = ProductUpdateResponse.CategoryId,
+
+        };
+
+        allCategory = await categoryClient.All();
+
+    }
+
+    async void HandleOnSubmitForm(EditContext editContext)
+    {
+
+        JsHelper.LogObject(ProductUpdateRequest);
+
+        var result =
+
+          await productClient.UpdateProduct(
+
+          ProductUpdateResponse.Id,
+          ProductUpdateRequest
+          );
+
+        if (result != null)
+        {
+
+            ToastService.Notify(new(ToastType.Success, $"Thong bao", "Update thanh cong"));
+
+            await callData();
+
+        }
+
+    }
+
+    private async Task OnPageChangedAsync(int newPageNumber)
+    {
+        pageNumber = newPageNumber;
+        callData();
+    }
+
+    private async Task OnSearchInput(ChangeEventArgs e)
+    {
+        search = e.Value.ToString();
+        callData();
+    }
+
+
+   
+
+
+    private async Task OnChangeSort(ChangeEventArgs e)
+    {
+       
+        DTOShared.Enums.SortProductOption result;
+        if (Enum.TryParse(e.Value.ToString(), out result))
+        {
+            sort = result;
+            await callData();
+        }
+    }
+
+}

@@ -1,0 +1,86 @@
+﻿<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignalR Streaming Demo</title>
+</head>
+<body>
+    <ul id="messagesList">
+
+        <li>1</li>
+
+    </ul>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
+
+
+<script>
+
+
+
+    // app.js
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/hub/streamingHub")
+        .build();
+
+
+
+
+    connection.start().then(function () {
+        console.log("ket noi thah cong")
+        connection.stream("Counter", 10, 500)
+            .subscribe({
+                next: (item) => {
+                    var li = document.createElement("li");
+                    li.textContent = item;
+                    document.getElementById("messagesList").appendChild(li);
+                    console.log("next")
+                },
+                complete: () => {
+                    var li = document.createElement("li");
+                    li.textContent = "Stream completed";
+                    document.getElementById("messagesList").appendChild(li);
+                    console.log("complete")
+                },
+                error: (err) => {
+                    var li = document.createElement("li");
+                    li.textContent = err;
+                    document.getElementById("messagesList").appendChild(li);
+                },
+            });
+
+
+
+
+        function SendMessage() {
+            const subject = new signalR.Subject();
+            connection.send("UploadStream", subject);
+            var iteration = 0;
+            const intervalHandle = setInterval(() => {
+                iteration++;
+                subject.next({ count: iteration, message: 'uploading data' });
+                if (iteration === 10) {
+                    clearInterval(intervalHandle);
+                    subject.complete();
+                }
+            }, 1000);
+        }
+
+        SendMessage();
+
+
+
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+
+
+
+
+
+</script>

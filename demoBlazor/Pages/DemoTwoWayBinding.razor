@@ -1,0 +1,34 @@
+﻿@page "/bindingdata"
+
+<h2>1 Way Binding</h2>
+<span> Name1: @Name</span>
+
+
+<input type="text" value="@Name"
+      
+       
+       />
+
+<h2> 2 Way Binding</h2>
+
+<span> Name2: @Name2</span>
+
+<input type="text"
+       @bind="@Name2"    
+        @bind:event="oninput"
+        
+       />
+
+
+
+@code {
+    @*<input type="text" value="@Name" @onchange="UpdateNameOnChange" />*@
+    public string Name { get; set; } = "thevinh";
+
+    public string Name2 { get; set; } = "thevinh2";
+
+    public async Task HandleUpdate()
+    {
+        Console.WriteLine("Handle Update");
+    }
+}

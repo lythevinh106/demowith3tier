@@ -1,0 +1,23 @@
+﻿
+
+
+
+<button class="" 
+        @onclick="callResetCount"
+        >Counter child @countChild
+ </button>
+
+@code {
+
+    [Parameter]
+    public int countChild { get; set; } = 0;
+
+    [Parameter]
+
+    public EventCallback resetCount { get; set; }
+
+
+    private async Task callResetCount() => await resetCount.InvokeAsync();
+
+
+}

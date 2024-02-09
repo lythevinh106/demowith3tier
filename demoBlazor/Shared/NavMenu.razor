@@ -1,0 +1,111 @@
+﻿
+@using demoBlazor.FluxorServices.Counter
+
+
+
+
+@inject IState<CounterState> counterState
+
+@implements IDisposable
+
+@inject JsHelper jsHelper
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">demoBlazor</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="counter">
+                <span class="oi oi-plus" aria-hidden="true"></span> Counter
+
+                @counterState.Value.ClickCount
+
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="fetchdata">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="product">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Product
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="category">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> category
+            </NavLink>
+        </div>
+
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="bindingdata">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> DemoTwoWaybinding
+            </NavLink>
+        </div>
+
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="customlayout">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> customlayout
+            </NavLink>
+        </div>
+
+
+    </nav>
+</div>
+
+@code {
+   
+
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    private bool disposed = false;
+
+    protected override void OnInitialized()
+    {
+      
+        // Đăng ký sự kiện khi component được khởi tạo
+        counterState.StateChanged += StateChanged;
+    }  
+
+    ///phuong thuc dc goi sau kho state change dien ra lam cho no re-render lại
+    public void StateChanged(object sender, EventArgs args)
+    {
+        InvokeAsync(StateHasChanged);//tương tu StateHasChanged()
+    }
+    void IDisposable.Dispose()
+    {
+        // Hủy đăng ký sự kiện khi component bị hủy bỏ : sau khi roi component
+        if (!disposed)
+        {
+            jsHelper.Log("---test huy dispose--------");
+
+            counterState.StateChanged -= StateChanged;
+            disposed = true;
+        }
+    }
+}
+

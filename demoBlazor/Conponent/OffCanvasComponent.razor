@@ -1,0 +1,59 @@
+﻿
+
+
+
+    <Offcanvas @ref="offcanvas"
+               title="@title"
+               OnShowing="OnOffcanvasShowingAsync"
+               OnShown="OnOffcanvasShownAsync"
+               OnHiding="OnOffcanvasHidingAsync"
+               OnHidden="OnOffcanvasHiddenAsync"
+               Size="size">
+        <BodyTemplate>
+            @childContent
+        </BodyTemplate>
+
+
+    </Offcanvas>
+
+@*<Button Color="ButtonColor.Primary" @onclick="OnShowOffcanvasClick">Show offcanvas</Button>*@
+
+@code {
+    public Offcanvas offcanvas = default!;
+
+
+
+    [Parameter]
+    public string title { get; set; } = "Title";
+
+    [Parameter]
+    public RenderFragment? childContent { get; set; }
+
+
+    [Parameter]
+    public OffcanvasSize size { get; set; } = OffcanvasSize.Regular;
+
+
+    [Parameter]
+
+    public EventCallback OnShowOffcanvasClick { get; set; }
+
+
+
+
+
+
+
+
+
+
+
+    // Event  default offcavas
+    //private async Task OnShowOffcanvasClick() => await offcanvas.ShowAsync();
+    private async Task OnHideOffcanvasClick() => await offcanvas.HideAsync();
+
+    private async Task OnOffcanvasShowingAsync() => await Task.Run(() => { Console.WriteLine("Event: Showing"); });
+    private async Task OnOffcanvasShownAsync() => await Task.Run(() => { Console.WriteLine("Event: Shown"); });
+    private async Task OnOffcanvasHidingAsync() => await Task.Run(() => { Console.WriteLine("Event: Hiding"); });
+    private async Task OnOffcanvasHiddenAsync() => await Task.Run(() => { Console.WriteLine("Event: Hidden"); });
+}

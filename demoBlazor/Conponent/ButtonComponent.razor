@@ -1,0 +1,65 @@
+﻿
+
+
+<Button @ref="btnEl" Color="ButtonColor.Primary" Size="@size" @onclick="OnButtonClick"
+        
+        onsubmit="OnSubmit"
+        Type="@type"
+        
+        >
+
+    @if (ChildContent != null)
+    {
+        @ChildContent
+    }
+    else
+    {
+        <Icon Name="IconName.Activity"></Icon>
+    }
+
+</Button>
+
+
+
+@code {
+
+    private Button btnEl;
+
+    [Parameter]
+
+    public RenderFragment? ChildContent { get; set; }
+
+
+
+    [Parameter]
+
+    public ButtonType type { get; set; } =  ButtonType.Submit;
+
+    [Parameter]
+
+    public EventCallback OnButtonClick { get; set; }
+
+
+
+
+    [Parameter]
+
+    public EventCallback OnSubmit { get; set; }
+
+
+
+    [Parameter]
+
+    public Size size { get; set; } = Size.Medium;
+
+
+    //public async Task CallButtonClick()
+    //{
+    //    await OnButtonClick.InvokeAsync();
+    //}
+
+    //public async Task HandleOnSubmit()
+    //{
+    //    await OnSubmit.InvokeAsync();
+    //}
+}

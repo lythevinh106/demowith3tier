@@ -1,0 +1,95 @@
+﻿@using demoBlazor.FluxorServices.Other
+
+@inject IState<demoBlazor.FluxorServices.Error.ErrorState> errorState
+@inject JsHelper jsHelper
+@implements IDisposable
+@inject IDispatcher dispatcher
+
+
+<div>
+   
+   
+</div>
+
+@code {
+
+
+
+
+    [Inject] protected ToastService ToastService { get; set; } = default!;
+
+    //public RenderFragment? ChildContent { get; set; }
+
+    private bool disposed;
+
+
+
+    [Inject] protected PreloadService PreloadService { get; set; }
+
+    protected async override void OnInitialized()
+    {
+
+        base.OnInitializedAsync();
+        //   await loadingIndicator.Show();
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        base.OnParametersSetAsync();
+
+
+    }
+
+    protected async override void OnAfterRender(bool firstRender)
+    {
+
+        base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            errorState.StateChanged += StateChanged;
+        }
+
+
+    }
+
+
+    ///phuong thuc dc goi sau kho state change dien ra lam cho no re-render lại
+    public void StateChanged(object sender, EventArgs args)
+    {
+        InvokeAsync(StateHasChanged);//tương tu StateHasChanged()
+        if (errorState.Value._isAtive)
+        {
+            if (errorState.Value._msg!=null)
+            {
+                ToastService.Notify(new(ToastType.Danger, errorState.Value._msg));
+            }
+
+
+        }
+
+    }
+    void IDisposable.Dispose()
+    {
+        // Hủy đăng ký sự kiện khi component bị hủy bỏ : sau khi roi component
+        if (!disposed)
+        {
+            jsHelper.Log("---test huy dispose--------");
+
+            dispatcher.Dispatch(new demoBlazor.FluxorServices.Error.ActiveError(false, null));
+
+
+            errorState.StateChanged -= StateChanged;
+            disposed = true;
+
+
+
+        }
+    }
+
+
+
+
+
+
+}

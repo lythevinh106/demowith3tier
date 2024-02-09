@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34309.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MydemoFirst", "MydemoFirst\MydemoFirst.csproj", "{65407D3C-3342-46FA-871D-ED84A1EEA435}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MydemoFirst.DataAccess", "MydemoFirst.DataAccess\MydemoFirst.DataAccess.csproj", "{31542CF6-CF7A-440D-A003-3B9E93B4C701}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MydemoFirst.Services", "MydemoFirst.Services\MydemoFirst.Services.csproj", "{FB12858A-21E5-4D9B-8032-145D59150054}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MydemoFirst.Models", "MydemoFirst.Models\MydemoFirst.Models.csproj", "{254BBA02-17E1-4B7E-A740-EDEDAA191B54}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FD147BAC-37B0-471F-BA16-1D07A2619A4E}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DTOShared", "DTOShared\DTOShared.csproj", "{73C6C7D6-14C3-444E-9DAB-AD280F561B30}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "demoBlazor", "demoBlazor\demoBlazor.csproj", "{932C0056-D7E5-4E87-9AF1-772DC876A756}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{65407D3C-3342-46FA-871D-ED84A1EEA435}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65407D3C-3342-46FA-871D-ED84A1EEA435}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65407D3C-3342-46FA-871D-ED84A1EEA435}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65407D3C-3342-46FA-871D-ED84A1EEA435}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31542CF6-CF7A-440D-A003-3B9E93B4C701}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31542CF6-CF7A-440D-A003-3B9E93B4C701}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31542CF6-CF7A-440D-A003-3B9E93B4C701}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31542CF6-CF7A-440D-A003-3B9E93B4C701}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB12858A-21E5-4D9B-8032-145D59150054}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB12858A-21E5-4D9B-8032-145D59150054}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB12858A-21E5-4D9B-8032-145D59150054}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB12858A-21E5-4D9B-8032-145D59150054}.Release|Any CPU.Build.0 = Release|Any CPU
+		{254BBA02-17E1-4B7E-A740-EDEDAA191B54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{254BBA02-17E1-4B7E-A740-EDEDAA191B54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{254BBA02-17E1-4B7E-A740-EDEDAA191B54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{254BBA02-17E1-4B7E-A740-EDEDAA191B54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73C6C7D6-14C3-444E-9DAB-AD280F561B30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73C6C7D6-14C3-444E-9DAB-AD280F561B30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73C6C7D6-14C3-444E-9DAB-AD280F561B30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73C6C7D6-14C3-444E-9DAB-AD280F561B30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{932C0056-D7E5-4E87-9AF1-772DC876A756}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{932C0056-D7E5-4E87-9AF1-772DC876A756}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{932C0056-D7E5-4E87-9AF1-772DC876A756}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{932C0056-D7E5-4E87-9AF1-772DC876A756}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6557DC95-FA7F-4D3E-A159-C7D8ACA78A79}
+	EndGlobalSection
+EndGlobal

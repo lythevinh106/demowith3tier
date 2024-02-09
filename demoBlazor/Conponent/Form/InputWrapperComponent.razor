@@ -1,0 +1,33 @@
+﻿<div class="form-group mb-3 @classEl">
+
+    @if (labelTitle != null)
+    {
+        <label class="form-label mb-1">@labelTitle</label>
+    }
+
+    @ChildContent
+
+
+
+
+</div>
+
+@code {
+    //https://stackoverflow.com/questions/74232809/how-to-pass-binding-value-to-component-on-blazor
+
+    public ElementReference inputEL;
+
+
+
+
+    [Parameter]
+
+    public string? labelTitle { get; set; } = "";
+
+    [Parameter]
+    public string? classEl { get; set; }
+
+    [EditorRequired]
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+}

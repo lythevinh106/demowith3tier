@@ -1,0 +1,51 @@
+﻿@inherits LayoutComponentBase
+
+@using demoBlazor.Conponent
+@using demoBlazor.FluxorServices.Other
+@inject IState<OtherState> otherState
+
+
+
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+
+   
+
+
+
+        <main>
+            <div class="top-row px-4">
+                <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+            </div>
+
+            <article class="content  position-relative  "
+                     style="padding-left:0px !important;padding-right:0px !important">
+
+
+                @Body
+
+                <LoadingComponent>
+
+                </LoadingComponent>
+
+                <ErrorComponent>
+                </ErrorComponent>
+            </article>
+
+        </main>
+
+</div>
+
+
+
+
+
+@code {
+    
+
+  
+}

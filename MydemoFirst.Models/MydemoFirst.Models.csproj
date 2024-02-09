@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+	<!--<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>-->
+	
+	
+  <ItemGroup>
+ 
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.25" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.25" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.25">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="6.0.25" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.25" />
+	  
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.25">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+	  
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
+
+
+	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.25" />
+    <!--<PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />-->
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Modules\Category\Request\" />
+    <Folder Include="Modules\Category\Response\" />
+    <Folder Include="Modules\Order\Response\" />
+    <Folder Include="Modules\Order\Request\" />
+    <Folder Include="Modules\ProductOrder\Response\" />
+    <Folder Include="Modules\ProductOrder\Request\" />
+    <Folder Include="Modules\Products\Request\" />
+    <Folder Include="Modules\Products\Response\" />
+	  
+	  
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DTOShared\DTOShared.csproj" />
+  </ItemGroup>
+
+</Project>

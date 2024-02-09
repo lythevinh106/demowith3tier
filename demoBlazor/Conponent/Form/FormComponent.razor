@@ -1,0 +1,28 @@
+﻿<EditForm Model="@model"
+          OnValidSubmit="@UpdateSubmitForm"          
+          >
+
+    @childContent
+
+ 
+</EditForm>
+
+@code {
+    [Parameter]
+    public RenderFragment childContent { get; set; }
+
+    [Parameter]
+    public object model { get; set; }
+
+    [Parameter]
+    public EventCallback<EditContext> OnSubmitForm { get; set; }
+
+
+    public async Task UpdateSubmitForm(EditContext editContext)
+    {
+
+        await OnSubmitForm.InvokeAsync(editContext);
+    }
+
+
+}

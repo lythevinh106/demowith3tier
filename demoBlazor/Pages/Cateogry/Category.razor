@@ -1,0 +1,175 @@
+﻿@page "/category"
+@using demoBlazor.FluxorServices.Other
+@inject IState<OtherState> otherState
+@inject IDispatcher dispatcher
+
+@using DTOShared.Modules.Category.Response
+@if (@allCatetory == null)
+{
+
+}
+else
+{
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Sửa</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < allCatetory.Data.Count; i++)
+            {
+
+                var category = allCatetory.Data[i];
+
+                <tr>
+                    <td>@category.Id</td>
+                    <td>@category.Name</td>
+
+                    <td>
+
+                        <ButtonComponent OnButtonClick="() => HandleShowCanvas(category.Id)">
+                            <Icon Name="IconName.BrushFill"></Icon>
+                        </ButtonComponent>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <OffCanvasComponent @ref="OffcanvasEl">
+
+        <FormComponent @ref="@formEl"
+                       model=@categoryUpdateRequest
+                       OnSubmitForm="@HandleOnSubmitForm">
+            <DataAnnotationsValidator />
+
+            @if (categoryUpdateRequest != null)
+            {
+
+                <InputWrapperComponent labelTitle="Name">
+
+                    <InputText class="form-control"
+                               @bind-Value="@categoryUpdateRequest.Name"></InputText>
+
+                    <div class="text-danger fs-6 fw-bolder" style="min-height:24px">
+
+                        <ValidationMessage For="()=>categoryUpdateRequest.Name">
+                        </ValidationMessage>
+                    </div>
+                </InputWrapperComponent>
+
+            }
+
+            <ButtonComponent type=ButtonType.Submit> Submit</ButtonComponent>
+        </FormComponent>
+    </OffCanvasComponent>
+
+}
+
+@code{
+
+    [Inject] private JsHelper JsHelper { get; set; }
+    [Inject] private demoBlazor.Services.Cateogory.ICateogryClient categoryClient { get; set; }
+
+    private CategoryResponse Catetory;
+
+    public DTOShared.Pagging.PaggingResponse<CategoryResponse> allCatetory;
+
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        //Catetory = await categoryClient.GetCategoryByID(10);
+        //JsHelper.LogObject(Catetory);
+
+        await callData();
+
+    }
+
+    private async Task callData()
+    {
+        DTOShared.FetchData.FetchDataCategoryRequest request = new DTOShared.FetchData.FetchDataCategoryRequest
+        {
+
+            PageNumber = 2,
+            Sort = DTOShared.Enums.SortIdEnum.IdDescending,
+            PageSize = 2,
+
+        };
+
+        allCatetory = await categoryClient.FetchCategory(request);
+
+
+        JsHelper.LogObject(allCatetory);
+        await InvokeAsync(StateHasChanged);
+
+
+    }
+
+    public OffCanvasComponent OffcanvasEl = default!;
+
+    public FormComponent formEl = default!;
+
+    public InputWrapperComponent? nameInput;
+
+    public CategoryResponse? categoryUpdateResponse { get; set; } = new CategoryResponse();
+    public DTOShared.Modules.Category.Request.CategoryRequest? categoryUpdateRequest { get; set; } = new DTOShared.Modules.Category.Request.CategoryRequest();
+    [Inject] protected ToastService ToastService { get; set; } = default!;
+    private async Task ShowCategory(int index)
+    {
+        Console.WriteLine(index);
+        // await Task.Delay(TimeSpan.FromSeconds(3));
+    }
+    protected async Task HandleShowCanvas(int categoryId)
+    {
+
+        OffcanvasEl.offcanvas.ShowAsync();
+
+        categoryUpdateResponse = await categoryClient.GetCategoryByID(categoryId);
+
+        categoryUpdateRequest = new DTOShared.Modules.Category.Request.CategoryRequest()
+        {
+            Name = categoryUpdateResponse.Name
+
+        };
+
+    }
+
+    //protected override async Task OnAfterRenderAsync(bool first)
+    //{
+    //    if (nameInput != null)
+    //    {
+    //        //await JSRuntimeExtensions
+    //        nameInput.inputEL.Context.;
+    //    }
+    //}
+
+    async void HandleOnSubmitForm(EditContext editContext)
+    {
+
+        JsHelper.LogObject(editContext);
+
+        var result =
+
+          await categoryClient.UpdateCategory(
+
+          categoryUpdateResponse.Id,
+           categoryUpdateRequest
+          );
+
+        if (result != null)
+        {
+            Console.WriteLine("update....");
+
+            ToastService.Notify(new(ToastType.Success, $"Thong bao", "Update thanh cong"));
+            await callData();
+
+        }
+
+
+    }
+}

@@ -1,0 +1,88 @@
+﻿@using demoBlazor.FluxorServices.Other
+
+@inject IState<OtherState> otherState
+@inject JsHelper jsHelper
+@implements IDisposable
+
+
+
+<div>
+    <Preload LoadingText="Loading..." />
+</div>
+
+@code {
+
+
+    [Parameter]
+    public string? ExtraClass { get; set; } = "";
+
+
+
+
+    private bool disposed;
+
+
+
+    [Inject] protected PreloadService PreloadService { get; set; }
+
+    protected async override void OnInitialized()
+    {
+
+        base.OnInitializedAsync();
+        //   await loadingIndicator.Show();
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        base.OnParametersSetAsync();
+
+
+    }
+
+    protected async override void OnAfterRender(bool firstRender)
+    {
+
+        base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            otherState.StateChanged += StateChanged;
+        }
+
+
+    }
+
+
+    ///phuong thuc dc goi sau kho state change dien ra lam cho no re-render lại
+    public void StateChanged(object sender, EventArgs args)
+    {
+        InvokeAsync(StateHasChanged);//tương tu StateHasChanged()
+        if (otherState.Value._isLoading)
+        {
+            PreloadService.Show();
+
+        }
+        else
+        {
+            PreloadService.Hide();
+
+        }
+    }
+    void IDisposable.Dispose()
+    {
+        // Hủy đăng ký sự kiện khi component bị hủy bỏ : sau khi roi component
+        if (!disposed)
+        {
+            jsHelper.Log("---test huy dispose--------");
+
+            otherState.StateChanged -= StateChanged;
+            disposed = true;
+        }
+    }
+
+
+
+
+
+
+}

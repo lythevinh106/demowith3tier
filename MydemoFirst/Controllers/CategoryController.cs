@@ -99,7 +99,7 @@ namespace MydemoFirst.Controllers
 
             var result = new GenericResponse<CategoryResponse>
             {
-                Msg = "update thanh congggggggádadad",
+                Msg = "update thanh congggggg1234",
                 Values = newCategory
 
             };
